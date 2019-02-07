@@ -1,6 +1,6 @@
 {
   "name": "jmscss",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "JM SCSS generator.",
   "main": "src/index.ts",
   "scripts": {
