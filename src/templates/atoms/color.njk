@@ -1,0 +1,7 @@
+{%- macro colorLine(color) -%}
+  {%- if color.a === 1 -%}
+    ${{ color.name }}: rgb({{ color.r }}, {{ color.g }}, {{ color.b }});
+  {%- else -%}
+    ${{ color.name }}: rgba({{ color.r }}, {{ color.g }}, {{ color.b }}, {{ color.a}});
+  {%- endif -%}
+{%- endmacro -%}

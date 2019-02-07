@@ -1,0 +1,4 @@
+{%- from "templates/atoms/color.njk" import colorLine -%}
+{%- for color in colors %}
+  {{- colorLine(color) }}
+{% endfor -%}

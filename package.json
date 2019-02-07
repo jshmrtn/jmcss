@@ -1,0 +1,89 @@
+{
+  "name": "jmscss",
+  "version": "0.1.0",
+  "description": "JM SCSS generator.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "zem start",
+    "build": "zem build",
+    "test": "npm run tslint && npm run jest",
+    "clean": "zem clean",
+    "exec": "zem exec",
+    "publish": "now -n jm-scss-zeplin-extension -T joshmartin dist",
+    "jest": "NODE_ENV=jest ./node_modules/.bin/jest",
+    "tslint": "tslint 'src/**/*.ts?(x)' --project ."
+  },
+  "zeplin": {
+    "displayName": "JMCSS",
+    "projectTypes": [
+      "web"
+    ],
+    "options": [
+      {
+        "name": "Split Symbol",
+        "type": "text",
+        "id": "splitSymbol",
+        "default": "/"
+      },
+      {
+        "name": "Default color",
+        "type": "text",
+        "id": "defaultColor",
+        "default": "initial"
+      },
+      {
+        "name": "Default font weight",
+        "type": "text",
+        "id": "defaultFontWeight",
+        "default": "normal"
+      },
+      {
+        "name": "Default text-transform",
+        "type": "text",
+        "id": "defaultTextTransform",
+        "default": "none"
+      },
+      {
+        "name": "Default ext-align",
+        "type": "text",
+        "id": "defaultTextAlign",
+        "default": "left"
+      },
+      {
+        "name": "Media query mixin name",
+        "type": "text",
+        "id": "mediaQueryMixinName",
+        "default": "media-breakpoint-up"
+      },
+      {
+        "name": "Show variables with default values",
+        "type": "switch",
+        "id": "includeDefaultValue",
+        "default": true
+      },
+      {
+        "name": "Standard Subfix",
+        "type": "text",
+        "id": "standardSubfix",
+        "default": "std"
+      }
+    ]
+  },
+  "dependencies": {
+    "nunjucks": "^3.1.7",
+    "zem": "^0.3.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.0",
+    "@types/nunjucks": "^3.1.0",
+    "ejs": "^2.6.1",
+    "jest": "^24.1.0",
+    "jest-multiline-matchers": "^0.2.1",
+    "jest-nunjucks": "^1.0.0",
+    "nunjucks-loader": "^3.0.0",
+    "ts-jest": "^23.10.5",
+    "ts-loader": "^3.0",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1"
+  }
+}

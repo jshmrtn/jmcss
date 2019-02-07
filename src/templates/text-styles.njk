@@ -1,0 +1,46 @@
+{%- if globalErrors | length > 0 -%}
+/**
+ * All Errors:
+ *
+  {%- for error in globalErrors %}
+ * - {{ error.textStyleName }} – {{ error.property }} – {{ error.message | safe }}
+  {%- endfor %}
+ **/
+
+{% endif -%}
+{%- if textStyles | length > 0 -%}
+  {%- for textStyle in textStyles %}
+%{{textStyle.name}} {
+    {%- for property in textStyle.properties %}
+      {%- for error in property.errors %}
+  /* {{ error | safe }} */
+      {%- endfor %}
+  {{ property.property }}: {{ property.value }};
+    {%- endfor %}
+    {%- for breakpoint in textStyle.breakpoints %}
+
+  @include {{ mediaQueryMixinName }}({{ breakpoint.name }}) {
+      {%- for property in breakpoint.properties %}
+        {%- for error in property.errors %}
+    /* {{ error | safe }} */
+        {%- endfor %}
+    {{ property.property }}: {{ property.value }};
+      {%- endfor %}
+  }
+    {%- endfor %}
+}
+    {%- for option in textStyle.options %}
+
+%{{ option.name }} {
+      {%- for property in option.properties %}
+        {%- for error in property.errors %}
+  /* {{ error | safe }} */
+        {%- endfor %}
+  {{ property.property }}: {{ property.value }};
+      {%- endfor %}
+}
+    {%- endfor %}
+  {% endfor %}
+{%- else -%}
+/* No text styles defined */
+{%- endif -%}
