@@ -10,8 +10,8 @@ export function normalize(context: IContext, textStyles: ReadonlyArray<ITextStyl
     .map(({ name, textStyle }) => ({ name, textStyle, properties: normalizeProperties(context, textStyle) }))
     .sort(
       (
-        { name: { name: nameA, breakpoint: breakpointA } },
-        { name: { name: nameB, breakpoint: breakpointB } },
+        { name: { name: nameA, breakpoint: breakpointA, modifiedProperties: modifiedPropertiesA } },
+        { name: { name: nameB, breakpoint: breakpointB, modifiedProperties: modifiedPropertiesB } },
       ) => {
         if (nameA > nameB) { return 1; }
         if (nameA < nameB) { return -1; }
@@ -19,6 +19,8 @@ export function normalize(context: IContext, textStyles: ReadonlyArray<ITextStyl
         const breakpointBIndex = BREAKPOINTS.indexOf(breakpointB);
         if (breakpointAIndex > breakpointBIndex) { return 1; }
         if (breakpointAIndex < breakpointBIndex) { return -1; }
+        if (modifiedPropertiesA.length > modifiedPropertiesB.length) { return 1; }
+        if (modifiedPropertiesA.length < modifiedPropertiesB.length) { return -1; }
         return 0;
       },
     )
@@ -50,7 +52,9 @@ function newTextStyle(name: INormalizedName, properties: INormalizedProperty[]):
     breakpoints: [],
     name: name.baseName,
     options: [],
-    properties,
+    properties: properties.filter((property) => {
+      return !name.modifiedProperties.find((modifier) => modifier.property === property.property);
+    }),
   }, name, properties);
 }
 
@@ -127,8 +131,14 @@ function checkProperties(
 ): ReadonlyArray<INormalizedProperty> {
   return propertiesNew.reduce((acc, newProperty) => {
     const propertyBefore = propertiesBefore.find(({ property }) => property === newProperty.property);
+    if (!propertyBefore) {
+      if (name.modifiedProperties.find(({ property: compareProperty }) => compareProperty === newProperty.property)) {
+        return acc;
+      }
+      return [...acc, newProperty];
+    }
     if (name.modifiedProperties.find(({ property: compareProperty }) => compareProperty === newProperty.property)) {
-      return [...acc, propertyBefore];
+        return [...acc, propertyBefore];
     }
     if (propertyBefore.value === newProperty.value) {
       return [...acc, propertyBefore];
