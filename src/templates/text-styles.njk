@@ -32,7 +32,8 @@
     {%- for option in textStyle.options %}
 
 %{{ option.name }} {
-      {%- for property in option.properties %}
+  @extend %{{textStyle.name}};
+      {% for property in option.properties %}
         {%- for error in property.errors %}
   /* {{ error | safe }} */
         {%- endfor %}
