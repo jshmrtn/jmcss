@@ -4,7 +4,10 @@ import { normalize as normalizeName } from "./name";
 import { normalizeAll as normalizeProperties } from "./property";
 import { INormalizedName, INormalizedProperty, INormalizedTextStyle } from "./types";
 
-export function normalize(context: IContext, textStyles: ReadonlyArray<ITextStyle>): any {
+export function normalize(
+  context: IContext,
+  textStyles: ReadonlyArray<ITextStyle>,
+): ReadonlyArray<INormalizedTextStyle> {
   return Object.values(textStyles
     .map((textStyle) => ({ textStyle, name: normalizeName(context, textStyle) }))
     .map(({ name, textStyle }) => ({ name, textStyle, properties: normalizeProperties(context, textStyle) }))
@@ -83,7 +86,9 @@ function incorporateChanges(
           ...before.breakpoints,
           {
             name: name.breakpoint,
-            properties,
+            properties: properties.filter((property) => {
+              return !name.modifiedProperties.find((modifier) => modifier.property === property.property);
+            }),
           },
         ],
       };
@@ -94,14 +99,16 @@ function incorporateChanges(
       properties: checkProperties(before.properties, properties, name),
     };
   }
-  if (name.name !== before.name) {
+  if (name.name !== name.baseName) {
     const existingOption = before.options.find(({ name: compareName }) => compareName === name.name);
 
     if (existingOption) {
+      const optionsWithoutOld = arrayWithout(before.options, existingOption);
+
       before = {
         ...before,
         options: [
-          ...[...before.options].splice(before.options.indexOf(existingOption)),
+          ...optionsWithoutOld,
           {
             ...existingOption,
             properties: checkProperties(existingOption.properties, name.modifiedProperties, name),
@@ -129,31 +136,36 @@ function checkProperties(
   propertiesNew: ReadonlyArray<INormalizedProperty>,
   name: INormalizedName,
 ): ReadonlyArray<INormalizedProperty> {
-  return propertiesNew.reduce((acc, newProperty) => {
-    const propertyBefore = propertiesBefore.find(({ property }) => property === newProperty.property);
+  return propertiesNew.reduce((acc: ReadonlyArray<INormalizedProperty>, newProperty) => {
+
+    const propertyBefore = acc.find(({ property }) => property === newProperty.property);
+    const modifierProperty = !!name.modifiedProperties.find(
+      ({ property: compareProperty }) => compareProperty === newProperty.property,
+    );
+
+    if (modifierProperty) {
+      return acc;
+    }
+
     if (!propertyBefore) {
-      if (name.modifiedProperties.find(({ property: compareProperty }) => compareProperty === newProperty.property)) {
-        return acc;
-      }
       return [...acc, newProperty];
     }
-    if (name.modifiedProperties.find(({ property: compareProperty }) => compareProperty === newProperty.property)) {
-        return [...acc, propertyBefore];
+
+    if (propertyBefore.value !== newProperty.value) {
+      return [
+        ...arrayWithout(acc, propertyBefore),
+        {
+          ...propertyBefore,
+          errors: [
+            ...propertyBefore.errors,
+            `${name.name} differs (${propertyBefore.value} => ${newProperty.value})`,
+          ],
+        },
+      ];
     }
-    if (propertyBefore.value === newProperty.value) {
-      return [...acc, propertyBefore];
-    }
-    return [
-      ...acc,
-      {
-        ...propertyBefore,
-        errors: [
-          ...propertyBefore.errors,
-          `${name.name} differs (${propertyBefore.value} => ${newProperty.value})`,
-        ],
-      },
-    ];
-  }, []);
+
+    return acc;
+  }, propertiesBefore);
 }
 
 function removeDuplicatedStyles(textStyle: INormalizedTextStyle): INormalizedTextStyle {
@@ -184,4 +196,10 @@ function removeDuplicatedStyles(textStyle: INormalizedTextStyle): INormalizedTex
       };
     }),
   };
+}
+
+function arrayWithout<T>(list: ReadonlyArray<T>, toRemove: T): ReadonlyArray<T> {
+  const index = list.indexOf(toRemove);
+  if (index < 0) { return list; }
+  return [...list.slice(0, index), ...list.slice(index + 1)];
 }
