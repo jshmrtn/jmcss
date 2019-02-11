@@ -29,7 +29,8 @@ export function normalize(
     )
     .reduce((acc, { name, textStyle, properties }) => mergeTextStyle(acc, name, properties), {}),
   )
-    .map(removeDuplicatedStyles);
+    .map(removeDuplicatedStyles)
+    .map(removeEmptyBreakpoints);
 }
 
 function mergeTextStyle(
@@ -202,4 +203,11 @@ function arrayWithout<T>(list: ReadonlyArray<T>, toRemove: T): ReadonlyArray<T> 
   const index = list.indexOf(toRemove);
   if (index < 0) { return list; }
   return [...list.slice(0, index), ...list.slice(index + 1)];
+}
+
+function removeEmptyBreakpoints(textStyle: INormalizedTextStyle): INormalizedTextStyle {
+  return {
+    ...textStyle,
+    breakpoints: textStyle.breakpoints.filter(({ properties }) => properties.length > 0),
+  };
 }
