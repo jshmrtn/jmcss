@@ -3,14 +3,15 @@
   "version": "1.1.0",
   "description": "JM SCSS generator.",
   "main": "src/index.ts",
+  "private": true,
   "scripts": {
     "start": "zem start",
     "build": "npm run clean && zem build",
     "test": "npm run tslint && npm run jest",
     "clean": "zem clean",
     "exec": "zem exec",
-    "publish": "now -n jm-scss-zeplin-extension -T joshmartin dist",
-    "publish:alias": "now ln -T joshmartin https://zeplin.joshmartin.rocks -n --",
+    "deploy": "now -n jm-scss-zeplin-extension -T joshmartin dist",
+    "deploy:alias": "now ln -T joshmartin https://zeplin.joshmartin.rocks -n --",
     "jest": "NODE_ENV=jest ./node_modules/.bin/jest",
     "tslint": "tslint 'src/**/*.ts?(x)' --project ."
   },
