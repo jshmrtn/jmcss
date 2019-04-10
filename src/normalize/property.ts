@@ -30,15 +30,6 @@ export function normalize(
   value: number | string | IHexColor,
 ): INormalizedProperty | null {
   if (!value) {
-    if (!includeDefaultValue(context)) { return null; }
-
-    switch (property) {
-      case "color": return { property, errors: [], value: getDefaultColor(context) };
-      case "font-weight": return { property, errors: [], value: getDefaultFontWeight(context) };
-      case "text-transform": return { property, errors: [], value: getDefaultTextTransform(context) };
-      case "text-align": return { property, errors: [], value: getDefaultTextAlign(context) };
-    }
-
     return null;
   }
 
@@ -78,4 +69,51 @@ function renderColor(context: IContext, color: IHexColor): string {
 function componentToHex(c: number): string {
   const hex = c.toString(16);
   return hex.length === 1 ? "0" + hex : hex;
+}
+
+function propertyExists(properties: ReadonlyArray<INormalizedProperty>, expectedProperty: string): boolean {
+  return properties
+    .filter(({property}) => property === expectedProperty)
+    .length > 0;
+}
+
+export function addDefaultProperties(context: IContext, properties: ReadonlyArray<INormalizedProperty>):
+  ReadonlyArray<INormalizedProperty> {
+  if (!includeDefaultValue(context)) { return properties; }
+
+  const writableProperties = [...properties];
+
+  if (!propertyExists(writableProperties, "color")) {
+    writableProperties.push({
+      errors: [],
+      property: "color",
+      value: getDefaultColor(context),
+    });
+  }
+
+  if (!propertyExists(writableProperties, "font-weight")) {
+    writableProperties.push({
+      errors: [],
+      property: "font-weight",
+      value: getDefaultFontWeight(context),
+    });
+  }
+
+  if (!propertyExists(writableProperties, "text-transform")) {
+    writableProperties.push({
+      errors: [],
+      property: "text-transform",
+      value: getDefaultTextTransform(context),
+    });
+  }
+
+  if (!propertyExists(writableProperties, "text-align")) {
+    writableProperties.push({
+      errors: [],
+      property: "text-align",
+      value: getDefaultTextAlign(context),
+    });
+  }
+
+  return writableProperties;
 }

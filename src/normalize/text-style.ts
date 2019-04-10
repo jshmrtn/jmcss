@@ -1,7 +1,7 @@
 import { IContext, ITextStyle } from "zem";
 import { BREAKPOINTS } from "./constant";
 import { normalize as normalizeName } from "./name";
-import { normalizeAll as normalizeProperties } from "./property";
+import { addDefaultProperties, normalizeAll as normalizeProperties } from "./property";
 import { INormalizedName, INormalizedProperty, INormalizedTextStyle } from "./types";
 
 export function normalize(
@@ -29,6 +29,7 @@ export function normalize(
     )
     .reduce((acc, { name, textStyle, properties }) => mergeTextStyle(acc, name, properties), {}),
   )
+    .map((textStyle: INormalizedTextStyle) => applyDefaultStyles(context, textStyle))
     .map(removeDuplicatedStyles)
     .map(removeEmptyBreakpoints);
 }
@@ -167,6 +168,17 @@ function checkProperties(
 
     return acc;
   }, propertiesBefore);
+}
+
+function applyDefaultStyles(context: IContext, textStyle: INormalizedTextStyle): INormalizedTextStyle {
+  return {
+    ...textStyle,
+    breakpoints: textStyle.breakpoints.map((breakpoint) => ({
+      ...breakpoint,
+      properties: addDefaultProperties(context, breakpoint.properties),
+    })),
+    properties: addDefaultProperties(context, textStyle.properties),
+  };
 }
 
 function removeDuplicatedStyles(textStyle: INormalizedTextStyle): INormalizedTextStyle {
