@@ -9,10 +9,9 @@ Add the extension to your project via the manifest URL `https://zeplin.joshmarti
 ## Output
 
 <details>
-
   <summary>
     Example Output
-  <summary>
+  </summary>
 
   ```scss
   /* Color palette */
@@ -105,7 +104,6 @@ Add the extension to your project via the manifest URL `https://zeplin.joshmarti
     @extend %title-two;
     text-transform: uppercase;
   }
-    
   ```
 </details>
 
