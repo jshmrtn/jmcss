@@ -27,25 +27,25 @@
         "default": "/"
       },
       {
-        "name": "Default color",
+        "name": "Default: color",
         "type": "text",
         "id": "defaultColor",
         "default": "initial"
       },
       {
-        "name": "Default font weight",
+        "name": "Default: font-weight",
         "type": "text",
         "id": "defaultFontWeight",
         "default": "normal"
       },
       {
-        "name": "Default text-transform",
+        "name": "Default: text-transform",
         "type": "text",
         "id": "defaultTextTransform",
         "default": "none"
       },
       {
-        "name": "Default ext-align",
+        "name": "Default: text-align",
         "type": "text",
         "id": "defaultTextAlign",
         "default": "left"
