@@ -31,3 +31,11 @@ export function getStandardSuffix(context: IContext): string {
 export function getMediaQueryMixinName(context: IContext): string {
   return context.getOption("mediaQueryMixinName") as string;
 }
+
+export function useRelativeUnits(context: IContext): boolean {
+  return context.getOption("relativeUnits") as boolean;
+}
+
+export function getRelativeUnitBaseLength(context: IContext): number {
+  return parseInt(context.getOption("relativeUnitBaseLength") as string, 10);
+}

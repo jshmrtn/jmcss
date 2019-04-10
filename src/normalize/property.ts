@@ -4,7 +4,9 @@ import {
   getDefaultFontWeight,
   getDefaultTextAlign,
   getDefaultTextTransform,
+  getRelativeUnitBaseLength,
   includeDefaultValue,
+  useRelativeUnits,
 } from "../config";
 import { INormalizedProperty } from "./types";
 
@@ -56,7 +58,14 @@ export function normalize(
 }
 
 function toSpecificLength(context: IContext, length: number): string {
+  if (context.project.lengthUnit === "px" && useRelativeUnits(context)) {
+    return toRelativeLength(context, length);
+  }
   return `${Math.round(length * 1000) / 1000}${context.project.lengthUnit}`;
+}
+
+function toRelativeLength(context: IContext, length: number) {
+  return `${Math.round(length / getRelativeUnitBaseLength(context) * 1000) / 1000}rem`;
 }
 
 function toRelative(context: IContext, length: number, compareLength: number) {

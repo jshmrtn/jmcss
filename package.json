@@ -51,6 +51,18 @@
         "default": "left"
       },
       {
+        "name": "Use relative units (only for web projects)",
+        "type": "switch",
+        "id": "relativeUnits",
+        "default": false
+      },
+      {
+        "name": "Relative unit base length in px",
+        "type": "text",
+        "id": "relativeUnitBaseLength",
+        "default": "16"
+      },
+      {
         "name": "Media query mixin name",
         "type": "text",
         "id": "mediaQueryMixinName",
