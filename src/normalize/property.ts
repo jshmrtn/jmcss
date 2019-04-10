@@ -20,7 +20,7 @@ export function normalizeAll(context: IContext, textStyle: ITextStyle): INormali
     "line-height": textStyle.lineHeight,
     "text-align": textStyle.textAlign,
   })
-    .map(([property, value]) => normalize(context, property, value))
+    .map(([property, value]) => normalize(context, property, value, textStyle))
     .filter((property) => property !== null);
 }
 
@@ -28,6 +28,7 @@ export function normalize(
   context: IContext,
   property: string,
   value: number | string | IHexColor,
+  textStyle: ITextStyle,
 ): INormalizedProperty | null {
   if (!value) {
     return null;
@@ -39,15 +40,27 @@ export function normalize(
     case "font-style": return { property, errors: [], value: value as string };
     case "font-family": return { property, errors: [], value: value as string };
     case "font-stretch": return { property, errors: [], value: value as string };
-    case "line-height": return { property, errors: [], value: toSpecificLength(context, value as number) };
+    case "line-height": return {
+      errors: [],
+      property,
+      value: toRelative(context, value as number, textStyle.fontSize),
+    };
     case "text-align": return { property, errors: [], value: value as string };
-    case "letter-spacing": return { property, errors: [], value: toSpecificLength(context, value as number) };
+    case "letter-spacing": return {
+      errors: [],
+      property,
+      value: toRelative(context, value as number, textStyle.fontSize),
+    };
     case "color": return { property, errors: [], value: renderColor(context, value as IHexColor) };
   }
 }
 
 function toSpecificLength(context: IContext, length: number): string {
   return `${Math.round(length * 1000) / 1000}${context.project.lengthUnit}`;
+}
+
+function toRelative(context: IContext, length: number, compareLength: number) {
+  return (Math.round(1 / compareLength * length * 1000) / 1000).toString();
 }
 
 function toNumber(context: IContext, length: number): string {

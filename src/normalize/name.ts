@@ -31,7 +31,7 @@ export function normalize(context: IContext, textStyle: ITextStyle): INormalized
           const textStyleValue: number | string | IHexColor = textStyleCoerced[key];
           return {
             name: value,
-            ...normalizeProperty(context, MODIFIERS[prefix].property, textStyleValue),
+            ...normalizeProperty(context, MODIFIERS[prefix].property, textStyleValue, textStyle),
           };
         }
         return {
