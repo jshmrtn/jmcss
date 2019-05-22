@@ -33,6 +33,10 @@
 
 %{{ option.name }} {
   @extend %{{textStyle.name}};
+  {%- for error in option.errors %}
+
+  /* {{ error | safe }} */
+  {%- endfor %}
       {% for property in option.properties %}
         {%- for error in property.errors %}
   /* {{ error | safe }} */

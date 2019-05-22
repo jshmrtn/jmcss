@@ -116,6 +116,12 @@ function incorporateChanges(
   if (name.name !== name.baseName) {
     const existingOption = before.options.find(({ name: compareName }) => compareName === name.name);
 
+    const baseProperties = name.breakpoint === before.baseBreakpoint
+      ? before.properties
+      : before.breakpoints.find(({ name: compareName }) => compareName === name.breakpoint).properties;
+
+    const errors = checkOptionErrors(baseProperties, properties, name.modifiedProperties);
+
     if (existingOption) {
       before = {
         ...before,
@@ -123,6 +129,10 @@ function incorporateChanges(
           ...arrayWithout(before.options, existingOption),
           {
             ...existingOption,
+            errors: [
+              ...existingOption.errors,
+              ...errors,
+            ],
             properties: checkProperties(existingOption.properties, name.modifiedProperties, name),
           },
         ],
@@ -133,6 +143,7 @@ function incorporateChanges(
         options: [
           ...before.options,
           {
+            errors,
             name: name.name,
             properties: name.modifiedProperties,
           },
@@ -178,6 +189,33 @@ function checkProperties(
 
     return acc;
   }, propertiesBefore);
+}
+
+function checkOptionErrors(
+  baseProperties: ReadonlyArray<INormalizedProperty>,
+  properties: ReadonlyArray<INormalizedProperty>,
+  modifiedProperties: ReadonlyArray<INormalizedProperty>,
+): ReadonlyArray<string> {
+  return properties
+    .map((property) => {
+      const modifiedProperty = modifiedProperties.find(
+        ({property: comparePropertyName}) => comparePropertyName === property.property,
+      );
+      if (modifiedProperty) {
+        return null;
+      }
+      const oldProperty = baseProperties.find(
+        ({property: comparePropertyName}) => comparePropertyName === property.property,
+      );
+      if (!oldProperty) {
+        return `Property ${property.property} was not defined on base style.`;
+      }
+      if (oldProperty.value !== property.value) {
+        return `Property ${property.property} (${property.value}) differs from base style (${oldProperty.value}).`;
+      }
+      return null;
+    })
+    .filter((message) => message !== null);
 }
 
 function applyDefaultStyles(context: IContext, textStyle: INormalizedTextStyle): INormalizedTextStyle {

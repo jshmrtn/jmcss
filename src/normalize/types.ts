@@ -31,6 +31,7 @@ export interface INormalizedBreakpoint {
 
 export interface INormalizedOption {
   name: string;
+  errors: ReadonlyArray<string>;
   properties: ReadonlyArray<INormalizedProperty>;
 }
 
