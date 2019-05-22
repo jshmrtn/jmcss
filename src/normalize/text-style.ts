@@ -13,15 +13,27 @@ export function normalize(
     .map(({ name, textStyle }) => ({ name, textStyle, properties: normalizeProperties(context, textStyle) }))
     .sort(
       (
-        { name: { name: nameA, breakpoint: breakpointA, modifiedProperties: modifiedPropertiesA } },
-        { name: { name: nameB, breakpoint: breakpointB, modifiedProperties: modifiedPropertiesB } },
+        { name: {
+          name: nameA,
+          baseName: baseNameA,
+          breakpoint: breakpointA,
+          modifiedProperties: modifiedPropertiesA,
+        } },
+        { name: {
+          name: nameB,
+          baseName: baseNameB,
+          breakpoint: breakpointB,
+          modifiedProperties: modifiedPropertiesB,
+        } },
       ) => {
-        if (nameA > nameB) { return 1; }
-        if (nameA < nameB) { return -1; }
+        if (baseNameA > baseNameB) { return 1; }
+        if (baseNameA < baseNameB) { return -1; }
         const breakpointAIndex = BREAKPOINTS.indexOf(breakpointA);
         const breakpointBIndex = BREAKPOINTS.indexOf(breakpointB);
         if (breakpointAIndex > breakpointBIndex) { return 1; }
         if (breakpointAIndex < breakpointBIndex) { return -1; }
+        if (nameA > nameB) { return 1; }
+        if (nameA < nameB) { return -1; }
         if (modifiedPropertiesA.length > modifiedPropertiesB.length) { return 1; }
         if (modifiedPropertiesA.length < modifiedPropertiesB.length) { return -1; }
         return 0;
@@ -74,7 +86,7 @@ function incorporateChanges(
       before = {
         ...before,
         breakpoints: [
-          ...[...before.breakpoints].splice(before.breakpoints.indexOf(existsingBreakpoint)),
+          ...arrayWithout(before.breakpoints, existsingBreakpoint),
           {
             ...existsingBreakpoint,
             properties: checkProperties(existsingBreakpoint.properties, properties, name),
@@ -105,12 +117,10 @@ function incorporateChanges(
     const existingOption = before.options.find(({ name: compareName }) => compareName === name.name);
 
     if (existingOption) {
-      const optionsWithoutOld = arrayWithout(before.options, existingOption);
-
       before = {
         ...before,
         options: [
-          ...optionsWithoutOld,
+          ...arrayWithout(before.options, existingOption),
           {
             ...existingOption,
             properties: checkProperties(existingOption.properties, name.modifiedProperties, name),

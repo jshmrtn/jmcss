@@ -32,6 +32,11 @@ export function normalize(
   value: number | string | IHexColor,
   textStyle: ITextStyle,
 ): INormalizedProperty | null {
+  // Add special case for Text Align since "left" is always null
+  if (property === "text-align" && !value) {
+    value = getDefaultTextAlign(context);
+  }
+
   if (!value) {
     return null;
   }
