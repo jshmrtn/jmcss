@@ -17,7 +17,7 @@
   },
   "zeplin": {
     "displayName": "JMCSS",
-    "projectTypes": [
+    "platforms": [
       "web"
     ],
     "options": [
@@ -37,6 +37,12 @@
         "name": "Default: font-weight",
         "type": "text",
         "id": "defaultFontWeight",
+        "default": "normal"
+      },
+      {
+        "name": "Default: font-style",
+        "type": "text",
+        "id": "defaultFontStyle",
         "default": "normal"
       },
       {
@@ -85,7 +91,7 @@
   },
   "dependencies": {
     "nunjucks": "^3.2.0",
-    "zem": "^0.3.5"
+    "zem": "^0.4.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
@@ -95,9 +101,9 @@
     "jest-multiline-matchers": "^0.2.1",
     "jest-nunjucks": "^1.0.0",
     "nunjucks-loader": "^3.0.0",
-    "ts-jest": "^23.10.5",
+    "ts-jest": "^24.0.2",
     "ts-loader": "^3.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1"
   }
 }
