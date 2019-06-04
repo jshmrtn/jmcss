@@ -1,6 +1,7 @@
 import { IContext, IHexColor, ITextStyle } from "zem";
 import {
   getDefaultColor,
+  getDefaultFontStyle,
   getDefaultFontWeight,
   getDefaultTextAlign,
   getDefaultTextTransform,
@@ -123,6 +124,14 @@ export function addDefaultProperties(context: IContext, properties: ReadonlyArra
       errors: [],
       property: "font-weight",
       value: getDefaultFontWeight(context),
+    });
+  }
+
+  if (!propertyExists(writableProperties, "font-style")) {
+    writableProperties.push({
+      errors: [],
+      property: "font-style",
+      value: getDefaultFontStyle(context),
     });
   }
 

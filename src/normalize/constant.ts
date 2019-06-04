@@ -17,6 +17,10 @@ export const MODIFIERS: Modifiers = {
     property: "color",
     values: null, // not limited css style values
   },
+  fs: {
+    property: "font-style",
+    values: ["normal", "italic", "oblique", "initial", "inherit"],
+  },
   fw: {
     property: "font-weight",
     values: [

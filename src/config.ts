@@ -12,6 +12,10 @@ export function getDefaultFontWeight(context: IContext): string {
   return context.getOption("defaultFontWeight") as string;
 }
 
+export function getDefaultFontStyle(context: IContext): string {
+  return context.getOption("defaultFontStyle") as string;
+}
+
 export function getDefaultTextTransform(context: IContext): string {
   return context.getOption("defaultTextTransform") as string;
 }
