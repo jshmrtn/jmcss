@@ -1,49 +1,49 @@
-export interface IModifierDescription {
+export interface ModifierDescription {
   property: string;
-  values?: ReadonlyArray<string>;
+  values?: readonly string[];
 }
 
-export interface IModifier {
+export interface Modifier {
   property: string;
   value: string;
 }
 
-export type Modifiers = Record<string, IModifierDescription>;
+export type Modifiers = Record<string, ModifierDescription>;
 
-export interface INormalizedTextStyle {
+export interface NormalizedTextStyle {
   name: string;
-  properties: ReadonlyArray<INormalizedProperty>;
+  properties: readonly NormalizedProperty[];
   baseBreakpoint: string;
-  breakpoints: ReadonlyArray<INormalizedBreakpoint>;
-  options: ReadonlyArray<INormalizedOption>;
+  breakpoints: readonly NormalizedBreakpoint[];
+  options: readonly NormalizedOption[];
 }
 
-export interface INormalizedProperty {
+export interface NormalizedProperty {
   property: string;
   value: string;
-  errors: ReadonlyArray<string>;
+  errors: readonly string[];
 }
 
-export interface INormalizedBreakpoint {
+export interface NormalizedBreakpoint {
   name: string;
-  properties: ReadonlyArray<INormalizedProperty>;
+  properties: readonly NormalizedProperty[];
 }
 
-export interface INormalizedOption {
+export interface NormalizedOption {
   name: string;
-  errors: ReadonlyArray<string>;
-  properties: ReadonlyArray<INormalizedProperty>;
+  errors: readonly string[];
+  properties: readonly NormalizedProperty[];
 }
 
-export interface IGlobalError {
+export interface GlobalError {
   textStyleName: string;
   property: string;
   message: string;
 }
 
-export interface INormalizedName {
+export interface NormalizedName {
   name: string;
   baseName: string;
   breakpoint: string;
-  modifiedProperties: INormalizedProperty[];
+  modifiedProperties: NormalizedProperty[];
 }

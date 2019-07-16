@@ -1,4 +1,8 @@
 {%- from "templates/atoms/color.njk" import colorLine -%}
+{%- if colors | length > 0 -%}
 {%- for color in colors %}
   {{- colorLine(color) }}
 {% endfor -%}
+{%- else -%}
+/* No colors defined */
+{%- endif -%}

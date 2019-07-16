@@ -1,4 +1,4 @@
-import { IContext, IHexColor, ITextStyle } from "zem";
+import { Context, HexColor, TextStyle } from "zem";
 import {
   getDefaultColor,
   getDefaultFontStyle,
@@ -9,11 +9,92 @@ import {
   includeDefaultValue,
   useRelativeUnits,
 } from "../config";
-import { INormalizedProperty } from "./types";
+import { NormalizedProperty } from "./types";
 
-export function normalizeAll(context: IContext, textStyle: ITextStyle): INormalizedProperty[] {
+function toRelativeLength(context: Context, length: number): string {
+  return `${Math.round((length / getRelativeUnitBaseLength(context)) * 1000) / 1000}rem`;
+}
+
+function toRelative(context: Context, length: number, compareLength: number): string {
+  return (Math.round((1 / compareLength) * length * 1000) / 1000).toString();
+}
+
+function toNumber(context: Context, length: number): string {
+  return (Math.round(length * 1000) / 1000).toString();
+}
+
+function toSpecificLength(context: Context, length: number): string {
+  if (context.project.lengthUnit === "px" && useRelativeUnits(context)) {
+    return toRelativeLength(context, length);
+  }
+  return `${Math.round(length * 1000) / 1000}${context.project.lengthUnit}`;
+}
+
+function componentToHex(c: number): string {
+  const hex = c.toString(16);
+  return hex.length === 1 ? "0" + hex : hex;
+}
+
+function renderColor(context: Context, color: HexColor): string {
+  const globalColor = context.project.findColorByHexAndAlpha({
+    alpha: color.a,
+    hex: componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b),
+  });
+  if (globalColor) {
+    return `$${globalColor.name}`;
+  } else {
+    return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+  }
+}
+
+export function normalize(
+  context: Context,
+  property: string,
+  value: number | string | HexColor,
+  textStyle: TextStyle,
+): NormalizedProperty | null {
+  // Add special case for Text Align since "left" is always null
+  if (property === "text-align" && !value) {
+    value = getDefaultTextAlign(context);
+  }
+
+  if (!value) {
+    return null;
+  }
+
+  switch (property) {
+    case "font-size":
+      return { property, errors: [], value: toSpecificLength(context, value as number) };
+    case "font-weight":
+      return { property, errors: [], value: toNumber(context, value as number) };
+    case "font-style":
+      return { property, errors: [], value: value as string };
+    case "font-family":
+      return { property, errors: [], value: value as string };
+    case "font-stretch":
+      return { property, errors: [], value: value as string };
+    case "line-height":
+      return {
+        errors: [],
+        property,
+        value: toRelative(context, value as number, textStyle.fontSize),
+      };
+    case "text-align":
+      return { property, errors: [], value: value as string };
+    case "letter-spacing":
+      return {
+        errors: [],
+        property,
+        value: toRelative(context, value as number, textStyle.fontSize),
+      };
+    case "color":
+      return { property, errors: [], value: renderColor(context, value as HexColor) };
+  }
+}
+
+export function normalizeAll(context: Context, textStyle: TextStyle): NormalizedProperty[] {
   return Object.entries({
-    "color": textStyle.color,
+    color: textStyle.color,
     "font-family": textStyle.fontFamily,
     "font-size": textStyle.fontSize,
     "font-stretch": textStyle.fontStretch,
@@ -27,87 +108,17 @@ export function normalizeAll(context: IContext, textStyle: ITextStyle): INormali
     .filter((property) => property !== null);
 }
 
-export function normalize(
-  context: IContext,
-  property: string,
-  value: number | string | IHexColor,
-  textStyle: ITextStyle,
-): INormalizedProperty | null {
-  // Add special case for Text Align since "left" is always null
-  if (property === "text-align" && !value) {
-    value = getDefaultTextAlign(context);
+function propertyExists(properties: readonly NormalizedProperty[], expectedProperty: string): boolean {
+  return properties.filter(({ property }) => property === expectedProperty).length > 0;
+}
+
+export function addDefaultProperties(
+  context: Context,
+  properties: readonly NormalizedProperty[],
+): readonly NormalizedProperty[] {
+  if (!includeDefaultValue(context)) {
+    return properties;
   }
-
-  if (!value) {
-    return null;
-  }
-
-  switch (property) {
-    case "font-size": return { property, errors: [], value: toSpecificLength(context, value as number) };
-    case "font-weight": return { property, errors: [], value: toNumber(context, value as number) };
-    case "font-style": return { property, errors: [], value: value as string };
-    case "font-family": return { property, errors: [], value: value as string };
-    case "font-stretch": return { property, errors: [], value: value as string };
-    case "line-height": return {
-      errors: [],
-      property,
-      value: toRelative(context, value as number, textStyle.fontSize),
-    };
-    case "text-align": return { property, errors: [], value: value as string };
-    case "letter-spacing": return {
-      errors: [],
-      property,
-      value: toRelative(context, value as number, textStyle.fontSize),
-    };
-    case "color": return { property, errors: [], value: renderColor(context, value as IHexColor) };
-  }
-}
-
-function toSpecificLength(context: IContext, length: number): string {
-  if (context.project.lengthUnit === "px" && useRelativeUnits(context)) {
-    return toRelativeLength(context, length);
-  }
-  return `${Math.round(length * 1000) / 1000}${context.project.lengthUnit}`;
-}
-
-function toRelativeLength(context: IContext, length: number) {
-  return `${Math.round(length / getRelativeUnitBaseLength(context) * 1000) / 1000}rem`;
-}
-
-function toRelative(context: IContext, length: number, compareLength: number) {
-  return (Math.round(1 / compareLength * length * 1000) / 1000).toString();
-}
-
-function toNumber(context: IContext, length: number): string {
-  return (Math.round(length * 1000) / 1000).toString();
-}
-
-function renderColor(context: IContext, color: IHexColor): string {
-  const globalColor = context.project.findColorByHexAndAlpha({
-    alpha: color.a,
-    hex: componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b),
-  });
-  if (globalColor) {
-    return `$${globalColor.name}`;
-  } else {
-    return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
-  }
-}
-
-function componentToHex(c: number): string {
-  const hex = c.toString(16);
-  return hex.length === 1 ? "0" + hex : hex;
-}
-
-function propertyExists(properties: ReadonlyArray<INormalizedProperty>, expectedProperty: string): boolean {
-  return properties
-    .filter(({property}) => property === expectedProperty)
-    .length > 0;
-}
-
-export function addDefaultProperties(context: IContext, properties: ReadonlyArray<INormalizedProperty>):
-  ReadonlyArray<INormalizedProperty> {
-  if (!includeDefaultValue(context)) { return properties; }
 
   const writableProperties = [...properties];
 

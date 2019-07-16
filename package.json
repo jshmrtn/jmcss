@@ -8,12 +8,12 @@
   "scripts": {
     "start": "zem start",
     "build": "npm run clean && zem build",
-    "test": "npm run tslint && npm run jest",
+    "test": "npm run lint && npm run jest --no-cache",
     "clean": "zem clean",
     "exec": "zem exec",
     "deploy": "now -n jm-scss-zeplin-extension --scope joshmartin dist && now ln --scope joshmartin jm-scss-zeplin-extension-jeremyzahner.joshmartin1.now.sh https://zeplin.joshmartin.rocks",
     "jest": "NODE_ENV=jest ./node_modules/.bin/jest",
-    "tslint": "tslint 'src/**/*.ts?(x)' --project ."
+    "lint": "eslint . --ext .ts,.js,.json"
   },
   "zeplin": {
     "displayName": "JMCSS",
@@ -94,16 +94,25 @@
     "zem": "^0.4.3"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.3",
     "@types/nunjucks": "^3.1.1",
-    "ejs": "^2.6.1",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "ejs": "^2.6.2",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-jest": "^22.8.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
     "jest-multiline-matchers": "^0.2.1",
     "jest-nunjucks": "^1.0.0",
     "nunjucks-loader": "^3.0.0",
+    "prettier": "1.18.2",
     "ts-jest": "^24.0.2",
     "ts-loader": "^3.0",
-    "tslint": "^5.17.0",
-    "typescript": "^3.5.1"
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
   }
 }

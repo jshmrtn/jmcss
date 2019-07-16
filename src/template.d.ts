@@ -1,42 +1,42 @@
-type IColor = import("zem").IColor;
-type INormalizedTextStyle = import("./normalize/types").INormalizedTextStyle;
-type IGlobalError = import("./normalize/types").IGlobalError;
-type INormalizedName = import("./normalize/types").INormalizedName;
+type Color = import("zem").Color;
+type NormalizedTextStyle = import("./normalize/types").NormalizedTextStyle;
+type GlobalError = import("./normalize/types").GlobalError;
+type NormalizedName = import("./normalize/types").NormalizedName;
 
 declare module "*/templates/text-styles.njk" {
-  const render: IRender;
+  const render: Render;
   export default render;
 
-  interface IRender {
-    render(data: IData): string;
+  interface Render {
+    render(data: Data): string;
   }
-  export interface IData {
-    textStyles: ReadonlyArray<INormalizedTextStyle>;
-    globalErrors: ReadonlyArray<IGlobalError>;
+  export interface Data {
+    textStyles: readonly NormalizedTextStyle[];
+    globalErrors: readonly GlobalError[];
     mediaQueryMixinName: string;
   }
 }
 
 declare module "*/templates/colors.njk" {
-  const render: IRender;
+  const render: Render;
   export default render;
 
-  interface IRender {
-    render(data: IData): string;
+  interface Render {
+    render(data: Data): string;
   }
-  interface IData {
-    readonly colors: ReadonlyArray<IColor>;
+  interface Data {
+    readonly colors: readonly Color[];
   }
 }
 
 declare module "*/templates/layer.njk" {
-  const render: IRender;
+  const render: Render;
   export default render;
 
-  interface IRender {
-    render(data: IData): string;
+  interface Render {
+    render(data: Data): string;
   }
-  interface IData {
-    readonly textStyle: INormalizedName;
+  interface Data {
+    readonly textStyle: NormalizedName;
   }
 }

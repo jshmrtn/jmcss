@@ -1,7 +1,7 @@
 import { Modifiers } from "./types";
 
 export const INCLUDED_PROPERTIES: Record<string, string> = {
-  "color": "color",
+  color: "color",
   "font-family": "fontFamily",
   "font-size": "fontSize",
   "font-stretch": "fontStretch",
@@ -23,17 +23,7 @@ export const MODIFIERS: Modifiers = {
   },
   fw: {
     property: "font-weight",
-    values: [
-      "100",
-      "200",
-      "300",
-      "400",
-      "500",
-      "600",
-      "700",
-      "800",
-      "900",
-    ],
+    values: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   },
   ta: {
     property: "text-align",

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`colors.njk message gets rendered if no colors are present 1`] = `"/* No colors defined */"`;
+
+exports[`colors.njk multiple colors without transparency get rendered 1`] = `
+"$test-color: rgb(255, 255, 255);
+$test-color-two: rgb(255, 255, 255);
+"
+`;
+
+exports[`colors.njk single color without transparency gets rendered 1`] = `
+"$test-color: rgb(255, 255, 255);
+"
+`;

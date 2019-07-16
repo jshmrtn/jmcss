@@ -4,66 +4,71 @@ declare module "zem" {
     BACKGROUND = "background",
   }
 
-  export interface IBlur {
+  export interface Blur {
     readonly type: BlurType;
     readonly radius: number;
   }
 
-  export enum IBorderPosition {
+  export enum BorderPosition {
     CENTER = "center",
     INSIDE = "inside",
     OUTSIDE = "outside",
   }
 
-  export interface IBorder {
-    readonly position: IBorderPosition;
+  export interface Border {
+    readonly position: BorderPosition;
     readonly thickness: number;
-    readonly fill: IFill;
+    readonly fill: Fill;
   }
 
-  export interface IColor {
-    // static blendAll(colors: IColor): IColor;
+  export interface Color {
+    // blendAll(colors: Color): Color;
     readonly name: string;
     readonly r: number;
     readonly g: number;
     readonly b: number;
     readonly a: number;
-    equals(color: IColor): boolean;
-    blend(color: IColor): IColor;
-    toHex(color: IColor): IHexColor;
-    toHsl(color: IColor): IHslColor;
+    equals(color: Color): boolean;
+    blend(color: Color): Color;
+    toHex(color: Color): HexColor;
+    toHsl(color: Color): HslColor;
   }
 
-  export interface IColorStop {
-    readonly color: IColor;
+  export interface ColorStop {
+    readonly color: Color;
     readonly position: number;
   }
 
-  export interface IComponent {
+  export interface Component {
     readonly name: string;
     readonly description: string;
   }
 
-  export interface IContext {
-    readonly project: IProject;
+  export interface Context {
+    readonly project?: Project;
+    readonly styleguide?: Styleguide;
     getOption(name: string): number | boolean | string;
   }
 
-  export interface IExtension {
-    layer?(context: IContext, selectedLayer: ILayer): string | ICodeObject;
-    screen?(context: IContext, selectedVerion: IVersion, selectedScreen: IScreen): string | ICodeObject;
-    component?(context: IContext, selectedVerion: IVersion, selectedComponent: IComponent): string | ICodeObject;
-    styleguideColors?(context: IContext, colors: ReadonlyArray<IColor>): string | ICodeObject;
-    styleguideTextStyles?(context: IContext, textStyles: ReadonlyArray<ITextStyle>): string | ICodeObject;
-    comment?(context: IContext, test: string): string;
-    exportStyleguideColors?(
-      context: IContext,
-      colors: ReadonlyArray<IColor>,
-    ): ICodeExportObject | ReadonlyArray<ICodeExportObject>;
+  export interface Extension {
+    layer?(context: Context, selectedLayer: Layer): string | CodeObject;
+    screen?(context: Context, selectedVerion: Version, selectedScreen: Screen): string | CodeObject;
+    component?(context: Context, selectedVerion: Version, selectedComponent: Component): string | CodeObject;
+    colors?(context: Context, colors: readonly Color[]): string | CodeObject;
+    textStyles?(context: Context, textStyles: readonly TextStyle[]): string | CodeObject;
+    exportColors?(context: Context, colors: readonly Color[]): CodeExportObject | readonly CodeExportObject[];
+    exportTextStyles?(
+      context: Context,
+      textStyles: readonly TextStyle[],
+    ): CodeExportObject | readonly CodeExportObject[];
+    styleguideColors?(context: Context, colors: readonly Color[]): string | CodeObject; // DEPRECATED
+    styleguideTextStyles?(context: Context, textStyles: readonly TextStyle[]): string | CodeObject; // DEPRECATED
+    comment?(context: Context, test: string): string; // DEPRECATED
+    exportStyleguideColors?(context: Context, colors: readonly Color[]): CodeExportObject | readonly CodeExportObject[]; // DEPRECATED
     exportStyleguideTextStyles?(
-      context: IContext,
-      textStyles: ReadonlyArray<ITextStyle>,
-    ): ICodeExportObject | ReadonlyArray<ICodeExportObject>;
+      context: Context,
+      textStyles: readonly TextStyle[],
+    ): CodeExportObject | readonly CodeExportObject[]; // DEPRECATED
   }
 
   export enum FillType {
@@ -108,10 +113,10 @@ declare module "zem" {
     DIVIDE = "divide",
   }
 
-  export interface IFill {
+  export interface Fill {
     readonly type: FillType;
-    readonly color: IColor;
-    readonly gradient: IGradient;
+    readonly color: Color;
+    readonly gradient: Gradient;
     readonly opacity: number;
     readonly blendMode: BlendMode;
     readonly fill: number;
@@ -123,11 +128,11 @@ declare module "zem" {
     ANGULAR = "angular",
   }
 
-  export interface IGradient {
+  export interface Gradient {
     readonly type: GradientType;
     readonly andle: number;
     readonly scale: number;
-    readonly colorStops: ReadonlyArray<IColorStop>;
+    readonly colorStops: readonly ColorStop[];
   }
 
   export enum LayerType {
@@ -136,39 +141,39 @@ declare module "zem" {
     GROUP = "group",
   }
 
-  export interface IRange {
+  export interface Range {
     readonly start: number;
     readonly end: number;
   }
 
-  export interface ITextStyleReference {
-    readonly range: IRange;
-    readonly textStyle: ITextStyle;
+  export interface TextStyleReference {
+    readonly range: Range;
+    readonly textStyle: TextStyle;
   }
 
-  export interface ILayer {
+  export interface Layer {
     readonly type: LayerType;
     readonly name: string;
-    readonly rect: IRect;
-    readonly fills: ReadonlyArray<IFill>;
-    readonly borders: ReadonlyArray<IBorder>;
-    readonly shadows: ReadonlyArray<IShadow>;
-    readonly blur: IBlur;
+    readonly rect: Rect;
+    readonly fills: readonly Fill[];
+    readonly borders: readonly Border[];
+    readonly shadows: readonly Shadow[];
+    readonly blur: Blur;
     readonly opacity: number;
     readonly blendMode: BlendMode;
     readonly borderRadius: number;
     readonly location: number;
     readonly exportable: boolean;
-    readonly assets: ReadonlyArray<IAsset>;
-    readonly parent: ILayer;
-    readonly version: IVersion;
+    readonly assets: readonly Asset[];
+    readonly parent: Layer;
+    readonly version: Version;
     readonly content: string;
-    readonly textStyles: ReadonlyArray<ITextStyleReference>;
-    readonly layers: ReadonlyArray<ILayer>;
+    readonly textStyles: readonly TextStyleReference[];
+    readonly layers: readonly Layer[];
     readonly componentName: string;
   }
 
-  export enum ProjectType {
+  export enum Platforms {
     WEB = "web",
     ANDROID = "android",
     IOS = "ios",
@@ -184,31 +189,44 @@ declare module "zem" {
     DP = "dp",
   }
 
-  export interface IProject {
-    readonly type: ProjectType;
+  export interface BaseProject {
+    readonly type: Platforms;
     readonly name: string;
-    readonly textStyles: ReadonlyArray<ITextStyle>;
-    readonly colors: ReadonlyArray<IColor>;
+    readonly textStyles: readonly TextStyle[];
+    readonly colors: readonly Color[];
     readonly density: string;
     readonly densityDivisor: number;
     readonly lengthUnit: LengthUnit;
     readonly textLengthUnit: TextLengthUnit;
-    findTextStyleByName(name: string): ITextStyle;
-    findTextStyleEqual(textStyle: ITextStyle): ITextStyle;
-    findColorByName(name: string): IColor;
-    findColorEqual(color: IColor): IColor;
-    findColorByHexAndAlpha(values: IColorValues): IColor;
   }
 
-  export interface IColorValues {
+  export interface Project extends BaseProject {
+    readonly linkedStyleguide?: Styleguide;
+    findTextStyleByName(name: string, useLinkedStyleguides?: boolean): TextStyle;
+    findTextStyleEqual(textStyle: TextStyle, useLinkedStyleguides?: boolean): TextStyle;
+    findColorByName(name: string, useLinkedStyleguides?: boolean): Color;
+    findColorEqual(color: Color, useLinkedStyleguides?: boolean): Color;
+    findColorByHexAndAlpha(values: ColorValues, useLinkedStyleguides?: boolean): Color;
+  }
+
+  export interface Styleguide extends BaseProject {
+    readonly parent?: Styleguide;
+    findTextStyleByName(name: string, useParentStyleguides?: boolean): TextStyle;
+    findTextStyleEqual(textStyle: TextStyle, useParentStyleguides?: boolean): TextStyle;
+    findColorByName(name: string, useParentStyleguides?: boolean): Color;
+    findColorEqual(color: Color, useParentStyleguides?: boolean): Color;
+    findColorByHexAndAlpha(values: ColorValues, useParentStyleguides?: boolean): Color;
+  }
+
+  export interface ColorValues {
     readonly hex: string;
     readonly alpha: number;
   }
 
-  export interface IScreen {
+  export interface Screen {
     readonly name: string;
     readonly description: string;
-    readonly tags: ReadonlyArray<string>;
+    readonly tags: readonly string[];
   }
 
   export enum ShadowType {
@@ -216,16 +234,16 @@ declare module "zem" {
     INNER = "inner",
   }
 
-  export interface IShadow {
+  export interface Shadow {
     readonly type: ShadowType;
     readonly offsetX: string;
     readonly offsetY: string;
     readonly blurRadius: number;
     readonly spread: number;
-    readonly color: IColor;
+    readonly color: Color;
   }
 
-  export interface ITextStyle {
+  export interface TextStyle {
     readonly name: string;
     readonly fontFace: string;
     readonly fontSize: number;
@@ -236,9 +254,9 @@ declare module "zem" {
     readonly lineHeight: number;
     readonly textAlign: string;
     readonly letterSpacing: number;
-    readonly color: IHexColor;
+    readonly color: Color;
     readonly weightText: string;
-    euqals(t: ITextStyle): boolean;
+    euqals(t: TextStyle): boolean;
   }
 
   export enum Source {
@@ -254,80 +272,80 @@ declare module "zem" {
     PREVIOUS = "previous",
   }
 
-  export interface IDestination {
+  export interface Destination {
     readonly name: string;
     readonly type: DestinationType;
   }
 
-  export interface ILink {
-    readonly rect: IRect;
-    readonly destination: IDestination;
+  export interface Link {
+    readonly rect: Rect;
+    readonly destination: Destination;
   }
 
-  export interface IGridVertical {
+  export interface GridVertical {
     readonly gutterWidth: number;
     readonly columnWidth: number;
     readonly numberOfCols: number;
     readonly guttersOnOutside: boolean;
   }
 
-  export interface IGridHorizontal {
+  export interface GridHorizontal {
     readonly gutterHeight: number;
     readonly rowHeight: number;
   }
 
-  export interface IGrid {
+  export interface Grid {
     readonly horizontalOffset: number;
-    readonly vertical: IGridVertical;
-    readonly horizontal: IGridHorizontal;
+    readonly vertical: GridVertical;
+    readonly horizontal: GridHorizontal;
   }
 
-  export interface IVersion {
+  export interface Version {
     readonly source: Source;
-    readonly image: IImage;
-    readonly backgroundColor: IColor;
-    readonly layers: ReadonlyArray<ILayer>;
-    readonly links: ReadonlyArray<ILink>;
-    readonly grid: IGrid;
-    readonly componentNames: ReadonlyArray<string>;
+    readonly mage: Image;
+    readonly backgroundColor: Color;
+    readonly layers: readonly Layer[];
+    readonly links: readonly Link[];
+    readonly grid: Grid;
+    readonly componentNames: readonly string[];
   }
 
-  export interface IImage {
+  export interface Image {
     readonly url: string;
     readonly width: number;
     readonly height: number;
   }
 
-  export interface IAsset {
+  export interface Asset {
     readonly density: string;
     readonly format: string;
   }
 
-  export interface IRect {
+  export interface Rect {
     readonly x: number;
     readonly y: number;
     readonly width: number;
     readonly height: number;
   }
 
-  export interface IHexColor {
+  export interface HexColor {
     readonly r: number;
     readonly g: number;
     readonly b: number;
     readonly a: number;
   }
-  export interface IHslColor {
+  export interface HslColor {
     readonly h: number;
     readonly s: number;
     readonly l: number;
   }
 
-  export interface ICodeObject {
+  export interface CodeObject {
     readonly code: string;
     readonly language: string;
   }
 
-  export interface ICodeExportObject {
+  export interface CodeExportObject {
     readonly code: string;
     readonly language: string;
     readonly filename: string;

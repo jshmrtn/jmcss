@@ -6,43 +6,40 @@ import { extractAllErrors, normalizeName, normalizeTextStyles } from "./normaliz
 import colorTemplate from "./templates/colors.njk";
 import layerTemplate from "./templates/layer.njk";
 import textStylesTemplate from "./templates/text-styles.njk";
+import { getTextStylesFromContext, getColorsFromContext } from "./helpers/context";
 
-function comment(context: zem.IContext, text: string): string {
+// DEPRECATED
+function comment(context: zem.Context, text: string): string {
   return `/* ${text} */`;
 }
 
-function layer(context: zem.IContext, selectedLayer: zem.ILayer): zem.ICodeObject {
+function layer(context: zem.Context, selectedLayer: zem.Layer): zem.CodeObject {
   try {
-    if (selectedLayer.type !== "text") { return; }
-
-    if (selectedLayer.textStyles.length === 0) {
-      return code(comment(
-        context,
-        `There aren't any text styles for the selected element.`,
-      ));
+    if (selectedLayer.type !== "text") {
+      return;
     }
 
-    const textStyle = context.project.findTextStyleEqual(
-      selectedLayer.textStyles[0].textStyle,
-    );
+    // DEPRECATED
+    if (selectedLayer.textStyles.length === 0) {
+      return code(comment(context, `There aren't any text styles for the selected element.`));
+    }
 
+    const textStyle = context.project.findTextStyleEqual(selectedLayer.textStyles[0].textStyle);
+
+    // DEPRECATED
     if (!textStyle) {
       return code(comment(context, `Couldn't find text style.`));
     }
 
     return code(layerTemplate.render({ textStyle: normalizeName(context, textStyle) }));
   } catch (e) {
+    // DEPRECATED
     return code(comment(context, `${e}\n${e.stack}`));
   }
 }
-// function screen(context: zem.Context, selectedVersion: zem.Version, selectedScreen: zem.Screen): zem.CodeObject {}
-// function component(
-//   context: zem.CodeObject,
-//   selectedVersion: zem.Version,
-//   selectedComponent: zem.Component
-// ): zem.CodeObject {}
 
-function styleguideColors(context: zem.IContext, colors: ReadonlyArray<zem.IColor>): zem.ICodeObject {
+// DEPRECATED
+function styleguideColors(context: zem.Context, colors: readonly zem.Color[]): zem.CodeObject {
   try {
     return code(colorTemplate.render({ colors }));
   } catch (e) {
@@ -50,36 +47,78 @@ function styleguideColors(context: zem.IContext, colors: ReadonlyArray<zem.IColo
   }
 }
 
-function exportStyleguideColors(context: zem.IContext, colors: ReadonlyArray<zem.IColor>): zem.ICodeExportObject {
+function colors(context: zem.Context): zem.CodeObject {
+  const colors = getColorsFromContext(context);
+
+  try {
+    return code(colorTemplate.render({ colors }));
+  } catch (e) {
+    // DEPRECATED
+    return code(comment(context, `${e}\n${e.stack}`));
+  }
+}
+
+// DEPRECATED
+function exportStyleguideColors(context: zem.Context, colors: readonly zem.Color[]): zem.CodeExportObject {
   return codeExport(styleguideColors(context, colors), "colors.scss");
 }
 
-function styleguideTextStyles(context: zem.IContext, textStyles: ReadonlyArray<zem.ITextStyle>): zem.ICodeObject {
+function exportColors(context: zem.Context): zem.CodeExportObject {
+  return codeExport(colors(context), "colors.scss");
+}
+
+// DEPRECATED
+function styleguideTextStyles(context: zem.Context, textStyles: readonly zem.TextStyle[]): zem.CodeObject {
   try {
     const normalizedTextStyles = normalizeTextStyles(context, textStyles);
-    return code(textStylesTemplate.render({
-      globalErrors: extractAllErrors(normalizedTextStyles),
-      mediaQueryMixinName: getMediaQueryMixinName(context),
-      textStyles: normalizedTextStyles,
-    }));
+    return code(
+      textStylesTemplate.render({
+        globalErrors: extractAllErrors(normalizedTextStyles),
+        mediaQueryMixinName: getMediaQueryMixinName(context),
+        textStyles: normalizedTextStyles,
+      }),
+    );
   } catch (e) {
     return code(comment(context, `${e}\n${e.stack}`));
   }
 }
 
-function exportStyleguideTextStyles(
-  context: zem.IContext,
-  textStyles: ReadonlyArray<zem.ITextStyle>,
-): zem.ICodeExportObject {
+function textStyles(context: zem.Context): zem.CodeObject {
+  const textStyles = getTextStylesFromContext(context);
+  try {
+    const normalizedTextStyles = normalizeTextStyles(context, textStyles);
+    return code(
+      textStylesTemplate.render({
+        globalErrors: extractAllErrors(normalizedTextStyles),
+        mediaQueryMixinName: getMediaQueryMixinName(context),
+        textStyles: normalizedTextStyles,
+      }),
+    );
+  } catch (e) {
+    // DEPRECATED
+    return code(comment(context, `${e}\n${e.stack}`));
+  }
+}
+
+// DEPRECATED
+function exportStyleguideTextStyles(context: zem.Context, textStyles: readonly zem.TextStyle[]): zem.CodeExportObject {
   return codeExport(styleguideTextStyles(context, textStyles), "text-styles.scss");
 }
 
-const extension: zem.IExtension = {
-  comment,
-  exportStyleguideColors,
-  exportStyleguideTextStyles,
+function exportTextStyles(context: zem.Context): zem.CodeExportObject {
+  return codeExport(textStyles(context), "text-styles.scss");
+}
+
+const extension: zem.Extension = {
+  comment, // DEPRECATED
+  exportStyleguideColors, // DEPRECATED
+  exportColors,
+  exportStyleguideTextStyles, // DEPRECATED
+  exportTextStyles,
   layer,
-  styleguideColors,
-  styleguideTextStyles,
+  styleguideColors, // DEPRECATED
+  colors,
+  styleguideTextStyles, // DEPRECATED
+  textStyles,
 };
 export default extension;

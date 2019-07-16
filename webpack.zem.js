@@ -1,11 +1,12 @@
-const path = require('path')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require("path");
 
 module.exports = function(webpackConfig) {
   return {
     ...webpackConfig,
     entry: {
       ...webpackConfig.entry,
-      main: path.resolve(__dirname, 'src/index.ts')
+      main: path.resolve(__dirname, "src/index.ts"),
     },
     module: {
       ...webpackConfig.module,
@@ -13,30 +14,26 @@ module.exports = function(webpackConfig) {
         ...webpackConfig.module.rules,
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
-          exclude: /node_modules/
+          use: "ts-loader",
+          exclude: /node_modules/,
         },
         {
           test: /\.ejs/,
-          use: [
-            {loader: 'ejs-compiled-loader'}
-          ]
+          use: [{ loader: "ejs-compiled-loader" }],
         },
         {
           test: /\.njk/,
-          use: [
-            {loader: 'nunjucks-loader'}
-          ]
-        }
-      ]
+          use: [{ loader: "nunjucks-loader" }],
+        },
+      ],
     },
     resolve: {
       ...webpackConfig.resolve,
-      extensions: [ '.tsx', '.ts', '.js', '.json', '.njk' ],
+      extensions: [".tsx", ".ts", ".js", ".json", ".njk"],
       alias: {
         ...(webpackConfig.resolve ? webpackConfig.resolve.alias : []),
-        templates: path.resolve(__dirname, 'src/templates')
-      }
+        templates: path.resolve(__dirname, "src/templates"),
+      },
     },
   };
-}
+};
