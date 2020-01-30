@@ -1,6 +1,7 @@
 module.exports = {
-  verbose: true,
+  verbose: false,
   collectCoverage: false,
+  collectCoverageFrom: ["src/**/*.{js,ts}", "!src/__tests__/**/*.{js,ts}"],
   testMatch: ["<rootDir>/**/?(*.)(spec|test|unit).(js?(x)|ts?(x))"],
   transform: {
     "^.+\\.njk$": "jest-nunjucks",
@@ -18,6 +19,11 @@ module.exports = {
     nunjucks: {
       root: "./src",
       config: {},
+    },
+    "ts-jest": {
+      tsConfig: {
+        module: "commonjs",
+      },
     },
   },
 };
