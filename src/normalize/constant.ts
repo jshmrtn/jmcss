@@ -1,6 +1,6 @@
 import { Modifiers } from "./types";
 
-export const INCLUDED_PROPERTIES: Record<string, string> = {
+export const INCLUDED_PROPERTIES = {
   color: "color",
   "font-family": "fontFamily",
   "font-size": "fontSize",

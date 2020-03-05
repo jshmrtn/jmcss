@@ -4,6 +4,12 @@ import { INCLUDED_PROPERTIES, MODIFIERS } from "./constant";
 import { normalize as normalizeProperty } from "./property";
 import { NormalizedName } from "./types";
 
+function isIncludedProperty(
+  propertyName: string | keyof typeof INCLUDED_PROPERTIES,
+): propertyName is keyof typeof INCLUDED_PROPERTIES {
+  return INCLUDED_PROPERTIES.hasOwnProperty(propertyName);
+}
+
 export function normalize(context: Context, textStyle: TextStyle): NormalizedName {
   const [breakpoint, name, hierarchy, ...rest] = textStyle.name.split(getSplitSymbol(context));
 
@@ -25,13 +31,14 @@ export function normalize(context: Context, textStyle: TextStyle): NormalizedNam
             return { prefix, value };
           })
           .map(({ prefix, value }: { prefix: string; value: string }) => {
-            if (INCLUDED_PROPERTIES[MODIFIERS[prefix].property]) {
-              const key: string = INCLUDED_PROPERTIES[MODIFIERS[prefix].property];
+            const propertyName = MODIFIERS[prefix].property;
+            if (isIncludedProperty(propertyName)) {
+              const key: string = INCLUDED_PROPERTIES[propertyName];
               const textStyleCoerced = (textStyle as unknown) as Record<string, number | string | Color>;
               const textStyleValue: number | string | HexColor = textStyleCoerced[key];
               return {
                 name: value,
-                ...normalizeProperty(context, MODIFIERS[prefix].property, textStyleValue, textStyle),
+                ...normalizeProperty(context, propertyName, textStyleValue, textStyle),
               };
             }
             return {

@@ -10,6 +10,7 @@ import {
   useRelativeUnits,
 } from "../config";
 import { NormalizedProperty } from "./types";
+import { INCLUDED_PROPERTIES } from "./constant";
 
 function toRelativeLength(context: Context, length: number): string {
   return `${Math.round((length / getRelativeUnitBaseLength(context)) * 1000) / 1000}rem`;
@@ -49,17 +50,36 @@ function renderColor(context: Context, color: HexColor): string {
 
 export function normalize(
   context: Context,
-  property: string,
+  property: string | keyof typeof INCLUDED_PROPERTIES,
+  value: null | "" | 0,
+  textStyle: TextStyle,
+): null;
+export function normalize(
+  context: Context,
+  property: keyof typeof INCLUDED_PROPERTIES,
   value: number | string | HexColor,
   textStyle: TextStyle,
-): NormalizedProperty | void {
+): NormalizedProperty;
+export function normalize(
+  context: Context,
+  property: string,
+  value: number | string | HexColor | null,
+  textStyle: TextStyle,
+): null;
+
+export function normalize(
+  context: Context,
+  property: string | keyof typeof INCLUDED_PROPERTIES,
+  value: number | string | HexColor | null,
+  textStyle: TextStyle,
+): NormalizedProperty | null {
   // Add special case for Text Align since "left" is always null
   if (property === "text-align" && !value) {
     value = getDefaultTextAlign(context);
   }
 
   if (!value) {
-    return;
+    return null;
   }
 
   switch (property) {
@@ -90,24 +110,54 @@ export function normalize(
     case "color":
       return { property, errors: [], value: renderColor(context, value as HexColor) };
     default:
-      return;
+      return null;
+  }
+}
+
+function textStylePropertyName(
+  propertyName: keyof typeof INCLUDED_PROPERTIES,
+): keyof Pick<
+  TextStyle,
+  | "color"
+  | "fontFamily"
+  | "fontSize"
+  | "fontStretch"
+  | "fontStyle"
+  | "fontWeight"
+  | "letterSpacing"
+  | "lineHeight"
+  | "textAlign"
+> {
+  switch (propertyName) {
+    case "color":
+      return "color";
+    case "font-family":
+      return "fontFamily";
+    case "font-size":
+      return "fontSize";
+    case "font-stretch":
+      return "fontStretch";
+    case "font-style":
+      return "fontStyle";
+    case "font-weight":
+      return "fontWeight";
+    case "letter-spacing":
+      return "letterSpacing";
+    case "line-height":
+      return "lineHeight";
+    case "text-align":
+      return "textAlign";
   }
 }
 
 export function normalizeAll(context: Context, textStyle: TextStyle): NormalizedProperty[] {
-  return Object.entries({
-    color: textStyle.color,
-    "font-family": textStyle.fontFamily,
-    "font-size": textStyle.fontSize,
-    "font-stretch": textStyle.fontStretch,
-    "font-style": textStyle.fontStyle,
-    "font-weight": textStyle.fontWeight,
-    "letter-spacing": textStyle.letterSpacing,
-    "line-height": textStyle.lineHeight,
-    "text-align": textStyle.textAlign,
-  })
-    .map(([property, value]) => normalize(context, property, value, textStyle))
-    .filter((property) => property !== null);
+  return Object.keys(INCLUDED_PROPERTIES)
+    .map((property: keyof typeof INCLUDED_PROPERTIES) => ({
+      property,
+      value: textStyle[textStylePropertyName(property)],
+    }))
+    .map(({ property, value }) => normalize(context, property, value, textStyle))
+    .filter((property): property is NormalizedProperty => property !== null);
 }
 
 function propertyExists(properties: readonly NormalizedProperty[], expectedProperty: string): boolean {

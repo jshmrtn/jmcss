@@ -103,7 +103,7 @@ function checkOptionErrors(
       }
       return null;
     })
-    .filter((message) => message !== null);
+    .filter((message): message is string => message !== null);
 }
 
 function incorporateChanges(
