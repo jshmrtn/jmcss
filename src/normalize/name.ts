@@ -18,7 +18,7 @@ export function normalize(context: Context, textStyle: TextStyle): NormalizedNam
               throw new Error(`modifier with prefix "${prefix}" is defined.`);
             }
 
-            if (MODIFIERS[prefix].values && !MODIFIERS[prefix].values.includes(value)) {
+            if (MODIFIERS[prefix].values && !MODIFIERS[prefix].values?.includes(value)) {
               throw new Error(`Value "${value}"for modifier with prefix ${prefix} is not allowed.`);
             }
 

@@ -150,7 +150,11 @@ function incorporateChanges(
     const baseProperties =
       name.breakpoint === before.baseBreakpoint
         ? before.properties
-        : before.breakpoints.find(({ name: compareName }) => compareName === name.breakpoint).properties;
+        : before.breakpoints.find(({ name: compareName }) => compareName === name.breakpoint)?.properties;
+
+    if (!baseProperties) {
+      return before;
+    }
 
     const errors = checkOptionErrors(baseProperties, properties, name.modifiedProperties);
 

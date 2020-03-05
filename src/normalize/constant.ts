@@ -15,7 +15,7 @@ export const INCLUDED_PROPERTIES: Record<string, string> = {
 export const MODIFIERS: Modifiers = {
   c: {
     property: "color",
-    values: null, // not limited css style values
+    values: [], // not limited css style values
   },
   fs: {
     property: "font-style",

@@ -15,19 +15,19 @@ function toRelativeLength(context: Context, length: number): string {
   return `${Math.round((length / getRelativeUnitBaseLength(context)) * 1000) / 1000}rem`;
 }
 
-function toRelative(context: Context, length: number, compareLength: number): string {
+function toRelative(_context: Context, length: number, compareLength: number): string {
   return (Math.round((1 / compareLength) * length * 1000) / 1000).toString();
 }
 
-function toNumber(context: Context, length: number): string {
+function toNumber(_context: Context, length: number): string {
   return (Math.round(length * 1000) / 1000).toString();
 }
 
 function toSpecificLength(context: Context, length: number): string {
-  if (context.project.lengthUnit === "px" && useRelativeUnits(context)) {
+  if (context.project?.lengthUnit === "px" && useRelativeUnits(context)) {
     return toRelativeLength(context, length);
   }
-  return `${Math.round(length * 1000) / 1000}${context.project.lengthUnit}`;
+  return `${Math.round(length * 1000) / 1000}${context.project?.lengthUnit}`;
 }
 
 function componentToHex(c: number): string {
@@ -36,7 +36,7 @@ function componentToHex(c: number): string {
 }
 
 function renderColor(context: Context, color: HexColor): string {
-  const globalColor = context.project.findColorByHexAndAlpha({
+  const globalColor = context.project?.findColorByHexAndAlpha({
     alpha: color.a,
     hex: componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b),
   });
@@ -52,14 +52,14 @@ export function normalize(
   property: string,
   value: number | string | HexColor,
   textStyle: TextStyle,
-): NormalizedProperty | null {
+): NormalizedProperty | void {
   // Add special case for Text Align since "left" is always null
   if (property === "text-align" && !value) {
     value = getDefaultTextAlign(context);
   }
 
   if (!value) {
-    return null;
+    return;
   }
 
   switch (property) {
@@ -89,6 +89,8 @@ export function normalize(
       };
     case "color":
       return { property, errors: [], value: renderColor(context, value as HexColor) };
+    default:
+      return;
   }
 }
 
