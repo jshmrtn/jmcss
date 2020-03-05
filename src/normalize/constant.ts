@@ -15,7 +15,7 @@ export const INCLUDED_PROPERTIES = {
 export const MODIFIERS: Modifiers = {
   c: {
     property: "color",
-    values: [], // not limited css style values
+    values: undefined, // not limited css style values
   },
   fs: {
     property: "font-style",
