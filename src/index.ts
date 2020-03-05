@@ -9,14 +9,14 @@ import textStylesTemplate from "./templates/text-styles.njk";
 import { getTextStylesFromContext, getColorsFromContext } from "./helpers/context";
 
 // DEPRECATED
-function comment(context: zem.Context, text: string): string {
+function comment(_context: zem.Context, text: string): string {
   return `/* ${text} */`;
 }
 
 function layer(context: zem.Context, selectedLayer: zem.Layer): zem.CodeObject {
   try {
     if (selectedLayer.type !== "text") {
-      return;
+      return code(comment(context, ``));
     }
 
     // DEPRECATED
@@ -24,7 +24,13 @@ function layer(context: zem.Context, selectedLayer: zem.Layer): zem.CodeObject {
       return code(comment(context, `There aren't any text styles for the selected element.`));
     }
 
-    const textStyle = context.project.findTextStyleEqual(selectedLayer.textStyles[0].textStyle);
+    let textStyle;
+
+    if (context.project) {
+      textStyle = context.project.findTextStyleEqual(selectedLayer.textStyles[0].textStyle);
+    } else if (context.styleguide) {
+      textStyle = context.styleguide.findTextStyleEqual(selectedLayer.textStyles[0].textStyle);
+    }
 
     // DEPRECATED
     if (!textStyle) {

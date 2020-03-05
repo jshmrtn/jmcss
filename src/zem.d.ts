@@ -162,7 +162,7 @@ declare module "zem" {
     readonly opacity: number;
     readonly blendMode: BlendMode;
     readonly borderRadius: number;
-    readonly location: number;
+    readonly rotation: number;
     readonly exportable: boolean;
     readonly assets: readonly Asset[];
     readonly parent: Layer;
