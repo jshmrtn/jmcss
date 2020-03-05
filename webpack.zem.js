@@ -4,6 +4,7 @@ const path = require("path");
 module.exports = function(webpackConfig) {
   return {
     ...webpackConfig,
+    target: "web",
     entry: {
       ...webpackConfig.entry,
       main: path.resolve(__dirname, "src/index.ts"),
