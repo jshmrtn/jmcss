@@ -1,5 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const colorsTemplate = require("template/colors.njk");
+import { Color } from "zem";
+import colorsTemplate from "./../templates/colors.njk";
 
 type testColor = Omit<Color, "equals" | "toHex" | "toHsl" | "blend">;
 
@@ -9,6 +9,8 @@ describe("colors.njk", () => {
     try {
       const colors: testColor[] = [{ name: "test-color", r: 255, g: 255, b: 255, a: 1 }];
       renderedTemplate = colorsTemplate.render({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         colors,
       });
     } catch (error) {
@@ -26,6 +28,8 @@ describe("colors.njk", () => {
         { name: "test-color-two", r: 255, g: 255, b: 255, a: 1 },
       ];
       renderedTemplate = colorsTemplate.render({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         colors,
       });
     } catch (error) {
@@ -40,6 +44,8 @@ describe("colors.njk", () => {
     try {
       const colors: testColor[] = [];
       renderedTemplate = colorsTemplate.render({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         colors,
       });
     } catch (error) {

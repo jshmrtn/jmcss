@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require("path");
 
-module.exports = function(webpackConfig) {
+module.exports = function (webpackConfig) {
   return {
     ...webpackConfig,
     target: "web",

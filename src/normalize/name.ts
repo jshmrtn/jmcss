@@ -34,7 +34,7 @@ export function normalize(context: Context, textStyle: TextStyle): NormalizedNam
             const propertyName = MODIFIERS[prefix].property;
             if (isIncludedProperty(propertyName)) {
               const key: string = INCLUDED_PROPERTIES[propertyName];
-              const textStyleCoerced = (textStyle as unknown) as Record<string, number | string | Color>;
+              const textStyleCoerced = textStyle as unknown as Record<string, number | string | Color>;
               const textStyleValue: number | string | HexColor = textStyleCoerced[key];
               return {
                 name: value,

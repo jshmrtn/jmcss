@@ -112,15 +112,15 @@ function incorporateChanges(
   properties: NormalizedProperty[],
 ): NormalizedTextStyle {
   if (name.breakpoint !== before.baseBreakpoint) {
-    const existsingBreakpoint = before.breakpoints.find(({ name: compareName }) => compareName === name.breakpoint);
-    if (existsingBreakpoint) {
+    const existingBreakpoint = before.breakpoints.find(({ name: compareName }) => compareName === name.breakpoint);
+    if (existingBreakpoint) {
       before = {
         ...before,
         breakpoints: [
-          ...arrayWithout(before.breakpoints, existsingBreakpoint),
+          ...arrayWithout(before.breakpoints, existingBreakpoint),
           {
-            ...existsingBreakpoint,
-            properties: checkProperties(existsingBreakpoint.properties, properties, name),
+            ...existingBreakpoint,
+            properties: checkProperties(existingBreakpoint.properties, properties, name),
           },
         ],
       };

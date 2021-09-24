@@ -4,7 +4,7 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.{js,ts}", "!src/__tests__/**/*.{js,ts}"],
   testMatch: ["<rootDir>/**/?(*.)(spec|test|unit).(js?(x)|ts?(x))"],
   transform: {
-    "^.+\\.njk$": "jest-nunjucks",
+    "^.+\\.njk$": "./src/__tests__/testHelpers/nunjucks-transformer.js",
     "^.+\\.js$": "babel-jest",
     "^.+\\.tsx?$": "ts-jest",
   },
@@ -21,9 +21,10 @@ module.exports = {
       config: {},
     },
     "ts-jest": {
-      tsConfig: {
+      tsconfig: {
         module: "commonjs",
       },
     },
   },
+  preset: "ts-jest/presets/js-with-babel",
 };

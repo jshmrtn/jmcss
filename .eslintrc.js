@@ -11,23 +11,15 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "off",
   },
 
-  "parser": "@typescript-eslint/parser",
+  parser: "@typescript-eslint/parser",
 
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
+  plugins: ["@typescript-eslint", "prettier"],
 
-  "plugins": ["@typescript-eslint", "prettier"],
-
-  "overrides": [
+  overrides: [
     {
-      "files": ["**/*.ts"],
-    }
+      files: ["**/*.ts"],
+    },
   ],
 
-  extends: [
-    "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
-  ],
+  extends: ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
 };

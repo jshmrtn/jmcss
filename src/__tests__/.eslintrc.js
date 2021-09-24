@@ -6,9 +6,5 @@ module.exports = {
 
   plugins: ["node", "jest"],
 
-  extends: [
-    "eslint:recommended",
-    "prettier",
-  ],
-
+  extends: ["eslint:recommended", "prettier"],
 };

@@ -38,9 +38,12 @@ function layer(context: zem.Context, selectedLayer: zem.Layer): zem.CodeObject {
     }
 
     return code(layerTemplate.render({ textStyle: normalizeName(context, textStyle) }));
-  } catch (e) {
-    // DEPRECATED
-    return code(comment(context, `${e}\n${e.stack}`));
+  } catch (error) {
+    if (error instanceof Error) {
+      // DEPRECATED
+      return code(comment(context, `${error}\n${error.stack}`));
+    }
+    return code(comment(context, `${error}`));
   }
 }
 
@@ -48,8 +51,11 @@ function layer(context: zem.Context, selectedLayer: zem.Layer): zem.CodeObject {
 function styleguideColors(context: zem.Context, colors: readonly zem.Color[]): zem.CodeObject {
   try {
     return code(colorTemplate.render({ colors }));
-  } catch (e) {
-    return code(comment(context, `${e}\n${e.stack}`));
+  } catch (error) {
+    if (error instanceof Error) {
+      return code(comment(context, `${error}\n${error.stack}`));
+    }
+    return code(comment(context, `${error}`));
   }
 }
 
@@ -58,9 +64,12 @@ function colors(context: zem.Context): zem.CodeObject {
 
   try {
     return code(colorTemplate.render({ colors }));
-  } catch (e) {
-    // DEPRECATED
-    return code(comment(context, `${e}\n${e.stack}`));
+  } catch (error) {
+    if (error instanceof Error) {
+      // DEPRECATED
+      return code(comment(context, `${error}\n${error.stack}`));
+    }
+    return code(comment(context, `${error}`));
   }
 }
 
@@ -84,8 +93,11 @@ function styleguideTextStyles(context: zem.Context, textStyles: readonly zem.Tex
         textStyles: normalizedTextStyles,
       }),
     );
-  } catch (e) {
-    return code(comment(context, `${e}\n${e.stack}`));
+  } catch (error) {
+    if (error instanceof Error) {
+      return code(comment(context, `${error}\n${error.stack}`));
+    }
+    return code(comment(context, `${error}`));
   }
 }
 
@@ -100,9 +112,12 @@ function textStyles(context: zem.Context): zem.CodeObject {
         textStyles: normalizedTextStyles,
       }),
     );
-  } catch (e) {
-    // DEPRECATED
-    return code(comment(context, `${e}\n${e.stack}`));
+  } catch (error) {
+    if (error instanceof Error) {
+      // DEPRECATED
+      return code(comment(context, `${error}\n${error.stack}`));
+    }
+    return code(comment(context, `${error}`));
   }
 }
 

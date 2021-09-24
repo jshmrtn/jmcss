@@ -34,6 +34,12 @@ declare module "zem" {
     toHsl(color: Color): HslColor;
   }
 
+  export interface SpacingToken {
+    readonly name: string;
+    readonly value: number;
+    readonly color: Color;
+  }
+
   export interface ColorStop {
     readonly color: Color;
     readonly position: number;
@@ -190,7 +196,7 @@ declare module "zem" {
   }
 
   export interface BaseProject {
-    readonly type: Platforms;
+    readonly type: Platforms | string;
     readonly name: string;
     readonly textStyles: readonly TextStyle[];
     readonly colors: readonly Color[];
@@ -207,6 +213,8 @@ declare module "zem" {
     findColorByName(name: string, useLinkedStyleguides?: boolean): Color;
     findColorEqual(color: Color, useLinkedStyleguides?: boolean): Color;
     findColorByHexAndAlpha(values: ColorValues, useLinkedStyleguides?: boolean): Color;
+    findSpacingTokenByValue(value: number, useLinkedStyleguides?: boolean): SpacingToken;
+    findSpacingTokenByName(name: string, useLinkedStyleguides?: boolean): SpacingToken;
   }
 
   export interface Styleguide extends BaseProject {
@@ -216,6 +224,8 @@ declare module "zem" {
     findColorByName(name: string, useParentStyleguides?: boolean): Color;
     findColorEqual(color: Color, useParentStyleguides?: boolean): Color;
     findColorByHexAndAlpha(values: ColorValues, useParentStyleguides?: boolean): Color;
+    findSpacingTokenByValue(value: number, useLinkedStyleguides?: boolean): SpacingToken;
+    findSpacingTokenByName(name: string, useLinkedStyleguides?: boolean): SpacingToken;
   }
 
   export interface ColorValues {

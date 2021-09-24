@@ -11,8 +11,8 @@ export function getTextStylesFromContext(context: zem.Context): readonly zem.Tex
       ? CONTAINER_TYPE.STYLEGUIDE
       : CONTAINER_TYPE.PROJECT;
 
-  console.debug("getTextStylesFromContext", context);
-  console.debug("containerType", containerType);
+  // console.debug("getTextStylesFromContext", context);
+  // console.debug("containerType", containerType);
 
   const textStyles: zem.TextStyle[] = [];
 
@@ -35,8 +35,8 @@ export function getColorsFromContext(context: zem.Context): readonly zem.Color[]
       ? CONTAINER_TYPE.STYLEGUIDE
       : CONTAINER_TYPE.PROJECT;
 
-  console.debug("getColorsFromContext", context);
-  console.debug("containerType", containerType);
+  // console.debug("getColorsFromContext", context);
+  // console.debug("containerType", containerType);
 
   const colors: zem.Color[] = [];
 
