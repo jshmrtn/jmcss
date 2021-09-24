@@ -266,7 +266,7 @@ declare module "zem" {
     readonly letterSpacing: number;
     readonly color: Color;
     readonly weightText: string;
-    euqals(t: TextStyle): boolean;
+    equals(t: TextStyle): boolean;
   }
 
   export enum Source {

@@ -11,8 +11,8 @@ export function getTextStylesFromContext(context: zem.Context): readonly zem.Tex
       ? CONTAINER_TYPE.STYLEGUIDE
       : CONTAINER_TYPE.PROJECT;
 
-  // console.debug("getTextStylesFromContext", context);
-  // console.debug("containerType", containerType);
+  console.debug("getTextStylesFromContext", context);
+  console.debug("containerType", containerType);
 
   const textStyles: zem.TextStyle[] = [];
 
@@ -23,8 +23,14 @@ export function getTextStylesFromContext(context: zem.Context): readonly zem.Tex
     if (context?.project?.linkedStyleguide?.textStyles !== undefined) {
       textStyles.push(...context?.project?.linkedStyleguide.textStyles);
     }
+    if (context?.project?.linkedStyleguide?.parent?.textStyles !== undefined) {
+      textStyles.push(...context?.project?.linkedStyleguide?.parent?.textStyles);
+    }
   } else if (containerType === CONTAINER_TYPE.STYLEGUIDE && context.styleguide?.textStyles) {
-    textStyles.push(...context.styleguide.textStyles);
+    textStyles.push(...context.styleguide?.textStyles);
+    if (context?.styleguide?.parent?.textStyles !== undefined) {
+      textStyles.push(...context?.styleguide?.parent?.textStyles);
+    }
   }
   return textStyles;
 }
@@ -35,8 +41,8 @@ export function getColorsFromContext(context: zem.Context): readonly zem.Color[]
       ? CONTAINER_TYPE.STYLEGUIDE
       : CONTAINER_TYPE.PROJECT;
 
-  // console.debug("getColorsFromContext", context);
-  // console.debug("containerType", containerType);
+  console.debug("getColorsFromContext", context);
+  console.debug("containerType", containerType);
 
   const colors: zem.Color[] = [];
 
@@ -47,8 +53,14 @@ export function getColorsFromContext(context: zem.Context): readonly zem.Color[]
     if (context?.project?.linkedStyleguide?.colors !== undefined) {
       colors.push(...context?.project?.linkedStyleguide.colors);
     }
+    if (context?.project?.linkedStyleguide?.parent?.colors !== undefined) {
+      colors.push(...context?.project?.linkedStyleguide.parent.colors);
+    }
   } else if (containerType === CONTAINER_TYPE.STYLEGUIDE && context.styleguide?.colors) {
     colors.push(...context.styleguide.colors);
+    if (context?.styleguide.parent?.colors !== undefined) {
+      colors.push(...context?.styleguide.parent.colors);
+    }
   }
   return colors;
 }

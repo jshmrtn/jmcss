@@ -13,6 +13,12 @@ function isIncludedProperty(
 export function normalize(context: Context, textStyle: TextStyle): NormalizedName {
   const [breakpoint, name, hierarchy, ...rest] = textStyle.name.split(getSplitSymbol(context));
 
+  if (rest.length === 0 || !breakpoint || !name || !hierarchy) {
+    throw new Error(
+      `Text style naming for ${textStyle.name} is broken. Make sure you use the minimal structure of breakpoint/name/hierarchy`,
+    );
+  }
+
   const modifiedProperties =
     rest.length === 1 && rest[0] === getStandardSuffix(context)
       ? []
@@ -21,7 +27,7 @@ export function normalize(context: Context, textStyle: TextStyle): NormalizedNam
             const [prefix, value] = modifier.split(":");
 
             if (!MODIFIERS[prefix]) {
-              throw new Error(`modifier with prefix "${prefix}" is defined.`);
+              throw new Error(`Modifier with prefix "${prefix}" is defined.`);
             }
 
             if (MODIFIERS[prefix].values && !MODIFIERS[prefix].values?.includes(value)) {
